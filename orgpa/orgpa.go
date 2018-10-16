@@ -14,9 +14,10 @@ func Run(databaseHandler database.DatabaseHandler) error {
 	r := mux.NewRouter()
 	listSubrouter := r.PathPrefix("/list").Subrouter()
 
-	r.Methods("GET").Path("/").HandlerFunc(handler.homePage)
 	listSubrouter.Methods("GET").Path("").HandlerFunc(handler.getList)
 	listSubrouter.Methods("POST").Path("").HandlerFunc(handler.addNote)
+	listSubrouter.Methods("GET").Path("/{id}").HandlerFunc(handler.getNoteByID)
+	listSubrouter.Methods("DELETE").Path("/{id}").HandlerFunc(handler.deleteNote)
 
 	srv := http.Server{
 		Addr:           "localhost:8000",

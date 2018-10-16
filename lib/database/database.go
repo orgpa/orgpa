@@ -5,4 +5,6 @@ package database
 type DatabaseHandler interface {
 	GetAllNotes() ([]Notes, error)
 	AddNote(note Notes) (Notes, error)
+	GetNoteByID(ID []byte) (Notes, error)
+	DeleteNote(ID []byte) error
 }
