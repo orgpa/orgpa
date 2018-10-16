@@ -4,4 +4,5 @@ package database
 // useful if ever we want to use a different database.
 type DatabaseHandler interface {
 	GetAllNotes() ([]Notes, error)
+	AddNote(note Notes) (Notes, error)
 }

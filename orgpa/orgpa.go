@@ -1,4 +1,4 @@
-package sover
+package orgpa
 
 import (
 	"net/http"
@@ -16,6 +16,7 @@ func Run(databaseHandler database.DatabaseHandler) error {
 
 	r.Methods("GET").Path("/").HandlerFunc(handler.homePage)
 	listSubrouter.Methods("GET").Path("").HandlerFunc(handler.getList)
+	listSubrouter.Methods("POST").Path("").HandlerFunc(handler.addNote)
 
 	srv := http.Server{
 		Addr:           "localhost:8000",

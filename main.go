@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"./lib/database/dblayer"
-	"./sover"
+	"./orgpa"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	err = sover.Run(databaseHandler)
+	err = orgpa.Run(databaseHandler)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

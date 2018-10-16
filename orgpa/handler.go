@@ -1,4 +1,4 @@
-package sover
+package orgpa
 
 import (
 	"encoding/json"
@@ -35,4 +35,16 @@ func (eh *eventServiceHandler) getList(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{error: Error occured while trying encode events to JSON %s}", err)
 	}
+}
+
+func (eh *eventServiceHandler) addNote(w http.ResponseWriter, r *http.Request) {
+	note := database.Notes{}
+	err := json.NewDecoder(r.Body).Decode(&note)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "{error: Error occured while trying to get the data %s}", err)
+		return
+	}
+	note, err = eh.dbHandler.AddNote(note)
+	fmt.Fprintln(w, note)
 }
