@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/frouioui/orgpa/lib/configuration"
-	"github.com/frouioui/orgpa/lib/database/dblayer"
-	"github.com/frouioui/orgpa/orgpa"
+	"github.com/frouioui/orgpa-database-api/configuration"
+	"github.com/frouioui/orgpa-database-api/database/dblayer"
+	"github.com/frouioui/orgpa-database-api/orgpa"
 )
 
 func main() {
