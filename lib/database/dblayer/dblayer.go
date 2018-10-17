@@ -1,8 +1,8 @@
 package dblayer
 
 import (
-	"../../database"
-	"../mongo"
+	"github.com/frouioui/orgpa/lib/database"
+	"github.com/frouioui/orgpa/lib/database/mongo"
 )
 
 type DBTYPE string

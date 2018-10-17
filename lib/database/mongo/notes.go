@@ -3,9 +3,8 @@ package mongo
 import (
 	"time"
 
+	"github.com/frouioui/orgpa/lib/database"
 	"gopkg.in/mgo.v2/bson"
-
-	"../../database"
 )
 
 // GetAllNotes return all the notes in the NOTES collection.

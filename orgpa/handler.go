@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../lib/database"
+	"github.com/frouioui/orgpa/lib/database"
 	"github.com/gorilla/mux"
 )
 
