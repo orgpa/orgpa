@@ -3,7 +3,7 @@ package mongo
 import (
 	"time"
 
-	"github.com/frouioui/orgpa/lib/database"
+	"github.com/frouioui/orgpa-database-api/database"
 	"gopkg.in/mgo.v2/bson"
 )
 

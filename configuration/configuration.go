@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/frouioui/orgpa/lib/database/dblayer"
+	"github.com/frouioui/orgpa-database-api/database/dblayer"
 )
 
 const (

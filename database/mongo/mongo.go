@@ -6,7 +6,7 @@ import (
 
 const (
 	// DB : database name
-	DB = "sover"
+	DB = "orgpa"
 
 	// NOTES : name of the collection containing the notes
 	NOTES = "notes"
