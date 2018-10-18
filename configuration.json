@@ -1,3 +1,4 @@
 {
-	"endpointapi": "localhost:8000"
+	"endpointapi": "0.0.0.0:8000",
+	"dbconnection": "mongodb://172.17.0.1:27017"
 }

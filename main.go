@@ -15,7 +15,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	fmt.Println(config)
-	databaseHandler, err := dblayer.NewDBLayer(dblayer.MONGODB, "mongodb://127.0.0.1")
+	databaseHandler, err := dblayer.NewDBLayer(config.DBType, config.DBConnection)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

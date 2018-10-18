@@ -2,22 +2,21 @@ version: "2"
 
 services:
   orgpa-database-api:
-    image: golang:1.10.1-alpine
+    image: orgpa-database-api:latest
     restart: always
     links:
       - mongo-db
     volumes:
       - .:/go/src/github.com/frouioui/orgpa-database-api
-    working_dir: /go/src/github.com/frouioui/orgpa-database-api
     ports:
       - 8000:8000
-    command: go run main.go
 
   mongo-db:
-      image: mongo:latest
-      restart: always
-      volumes:
-        - ./volumes/mongo/:/data/db
-      ports:
-        - 27017:27017
-      command: mongod --smallfiles --logpath=/dev/null
+    image: mongo:4.0.3
+    restart: always
+    volumes:
+      - ./volumes/mongo/:/data/db
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    ports:
+      - 27017:27017
