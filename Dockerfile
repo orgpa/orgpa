@@ -1,8 +1,10 @@
 FROM golang:1.11.1-alpine
 
-COPY . /go/src/github.com/frouioui/orgpa-database-api
+ENV GOPATH=/go:/Orgpa
 
-WORKDIR /go/src/github.com/frouioui/orgpa-database-api
+COPY . /Orgpa/src/orgpa-database-api
+
+WORKDIR /Orgpa/src/orgpa-database-api
 
 EXPOSE 8000
 
