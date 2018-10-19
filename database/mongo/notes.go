@@ -1,9 +1,9 @@
 package mongo
 
 import (
+	"orgpa-database-api/database"
 	"time"
 
-	"github.com/frouioui/orgpa-database-api/database"
 	"gopkg.in/mgo.v2/bson"
 )
 

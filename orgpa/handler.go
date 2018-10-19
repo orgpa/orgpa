@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"orgpa-database-api/database"
 
-	"github.com/frouioui/orgpa-database-api/database"
 	"github.com/gorilla/mux"
 )
 

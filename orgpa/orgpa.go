@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/frouioui/orgpa-database-api/configuration"
-	"github.com/frouioui/orgpa-database-api/database"
+	"orgpa-database-api/configuration"
+	"orgpa-database-api/database"
+
 	"github.com/gorilla/mux"
 )
 

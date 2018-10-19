@@ -2,9 +2,8 @@ package configuration
 
 import (
 	"encoding/json"
+	"orgpa-database-api/database/dblayer"
 	"os"
-
-	"github.com/frouioui/orgpa-database-api/database/dblayer"
 )
 
 const (
