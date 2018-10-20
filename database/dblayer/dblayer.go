@@ -1,8 +1,8 @@
 package dblayer
 
 import (
-	"orgpa-database-api/database"
-	"orgpa-database-api/database/mongo"
+	"orgpa/orgpa-database-api/database"
+	"orgpa/orgpa-database-api/database/mongo"
 )
 
 type DBTYPE string

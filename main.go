@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"orgpa-database-api/configuration"
-	"orgpa-database-api/database/dblayer"
-	"orgpa-database-api/orgpa"
+	"orgpa/orgpa-database-api/configuration"
+	"orgpa/orgpa-database-api/database/dblayer"
+	"orgpa/orgpa-database-api/orgpa"
 )
 
 func main() {

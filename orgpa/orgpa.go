@@ -2,10 +2,9 @@ package orgpa
 
 import (
 	"net/http"
+	"orgpa/orgpa-database-api/configuration"
+	"orgpa/orgpa-database-api/database"
 	"time"
-
-	"orgpa-database-api/configuration"
-	"orgpa-database-api/database"
 
 	"github.com/gorilla/mux"
 )
