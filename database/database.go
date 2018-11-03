@@ -7,4 +7,5 @@ type DatabaseHandler interface {
 	AddNote(note Notes) (Notes, error)
 	GetNoteByID(ID []byte) (Notes, error)
 	DeleteNote(ID []byte) error
+	PatchNote(ID []byte, content string) error
 }

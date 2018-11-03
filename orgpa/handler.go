@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"orgpa/orgpa-database-api/database"
+	"orgpa-database-api/database"
 
 	"github.com/gorilla/mux"
 )
@@ -20,7 +20,7 @@ func newEventHandler(databaseHandler database.DatabaseHandler) *eventServiceHand
 	}
 }
 
-func (eh *eventServiceHandler) getList(w http.ResponseWriter, r *http.Request) {
+func (eh *eventServiceHandler) getAllNotes(w http.ResponseWriter, r *http.Request) {
 	notes, err := eh.dbHandler.GetAllNotes()
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
 	if err != nil {
@@ -107,6 +107,32 @@ func (eh *eventServiceHandler) deleteNote(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{error: Error occured while trying to delete the note %s}", err)
+		return
+	}
+}
+
+func (eh *eventServiceHandler) patchNote(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json;charset=utf8")
+	vars := mux.Vars(r)
+	varID, ok := vars["id"]
+	note := database.Notes{}
+	err := json.NewDecoder(r.Body).Decode(&note)
+	if !ok || err != nil {
+		w.WriteHeader(400)
+		fmt.Fprint(w, `{"error": "missing information"}`)
+		return
+	}
+
+	ID, err := hex.DecodeString(varID)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, `{"error": "%s"}`, err)
+		return
+	}
+	err = eh.dbHandler.PatchNote(ID, note.Content)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "{\"error\": \"Error occured while trying to patching the note %s\"}", err)
 		return
 	}
 }

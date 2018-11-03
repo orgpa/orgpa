@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"orgpa/orgpa-database-api/database"
+	"orgpa-database-api/database"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -39,4 +39,11 @@ func (mgl *MongoDBLayer) DeleteNote(ID []byte) error {
 	s := mgl.getFreshSession()
 	defer s.Close()
 	return s.DB(DB).C(NOTES).RemoveId(bson.ObjectId(ID))
+}
+
+// PatchNote patch the given note with the given content
+func (mgl *MongoDBLayer) PatchNote(ID []byte, content string) error {
+	s := mgl.getFreshSession()
+	defer s.Close()
+	return s.DB(DB).C(NOTES).UpdateId(bson.ObjectId(ID), bson.M{"$set": bson.M{"Content": content}})
 }

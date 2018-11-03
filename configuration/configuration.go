@@ -2,7 +2,7 @@ package configuration
 
 import (
 	"encoding/json"
-	"orgpa/orgpa-database-api/database/dblayer"
+	"orgpa-database-api/database/dblayer"
 	"os"
 )
 
