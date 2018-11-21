@@ -1,4 +1,4 @@
 {
 	"endpointapi": "0.0.0.0:8000",
-	"dbconnection": "mongodb://172.17.0.1:27017"
+	"dbconnection": "172.17.0.1:3306"
 }

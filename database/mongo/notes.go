@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"orgpa-database-api/database"
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -20,7 +21,7 @@ func (mgl *MongoDBLayer) GetAllNotes() ([]database.Notes, error) {
 func (mgl *MongoDBLayer) AddNote(note database.Notes) (database.Notes, error) {
 	s := mgl.getFreshSession()
 	defer s.Close()
-	note.ID = bson.NewObjectId()
+	note.ID, _ = strconv.Atoi(string([]byte(bson.NewObjectId())))
 	note.LastEdit = time.Now().UTC()
 	return note, s.DB(DB).C(NOTES).Insert(note)
 }

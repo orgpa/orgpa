@@ -14,7 +14,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	fmt.Println(config)
-	databaseHandler, err := dblayer.NewDBLayer(config.DBType, config.DBConnection)
+	databaseHandler, err := dblayer.NewDBLayer(config.DBType, config.DBConnection, config.PasswordMySQL, config.DatabaseName)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
