@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"orgpa-database-api/database"
-	"strconv"
 )
 
 // GetAllNotes return all the notes found in the database.
@@ -29,7 +28,6 @@ func (msql *MysqlDBLayer) GetAllNotes() ([]database.Note, error) {
 }
 
 func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
-
 	query, err := msql.session.Prepare("INSERT INTO notes (title,content) VALUES(?,?)")
 	if err != nil {
 		panic(err)
@@ -45,8 +43,7 @@ func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
 		return database.Note{}, err
 	}
 
-	byteID := []byte(strconv.Itoa(int(newID)))
-	newNote, err := msql.GetNoteByID(byteID)
+	newNote, err := msql.GetNoteByID(int(newID))
 	if err != nil {
 		return database.Note{}, err
 	}
@@ -56,7 +53,7 @@ func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
 
 // GetNoteByID returns the note corresponding to the given ID.
 // Returns an error if there is any when querying the database.
-func (msql *MysqlDBLayer) GetNoteByID(ID []byte) (database.Note, error) {
+func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 	resp, err := msql.session.Query("SELECT * FROM notes WHERE id = ?", string(ID))
 	if err != nil {
 		return database.Note{}, err
