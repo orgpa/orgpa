@@ -9,15 +9,18 @@ import (
 )
 
 func main() {
-	config, err := configuration.ExtractConfiguration("configuration.json")
+	config, err := configuration.ExtractConfiguration()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	fmt.Println(config)
+
+	fmt.Println("Server's configuration:", config)
+
 	databaseHandler, err := dblayer.NewDBLayer(config.DBType, config.DBConnection, config.PasswordMySQL, config.DatabaseName)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
 	err = orgpa.Run(databaseHandler, config)
 	if err != nil {
 		log.Fatal(err.Error())

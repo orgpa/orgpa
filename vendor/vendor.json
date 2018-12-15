@@ -15,6 +15,12 @@
 			"revisionTime": "2018-10-12T15:31:51Z"
 		},
 		{
+			"checksumSHA1": "WYgvNuGj5g1sej4dJWBHF5bSKGE=",
+			"path": "github.com/kelseyhightower/envconfig",
+			"revision": "dd1402a4d99de9ac2f396cd6fcb957bc2c695ec1",
+			"revisionTime": "2018-05-17T19:45:57Z"
+		},
+		{
 			"checksumSHA1": "bS5Kp6YjeXz4nvvS55CqIBP+HzM=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "9856a29383ce1c59f308dd1cf0363a79b5bef6b5",

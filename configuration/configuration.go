@@ -1,42 +1,24 @@
 package configuration
 
 import (
-	"encoding/json"
 	"orgpa-database-api/database/dblayer"
-	"os"
-)
 
-const (
-	DBTypeDefault        = dblayer.DBTYPE("mysql")
-	DBConnectionDefault  = "127.0.0.1:3306"
-	EndpointAPIDefault   = "localhost:9900"
-	PasswordMySQLDefault = "test"
-	DatabaseNameDefault  = "orgpa_user_api"
+	"github.com/kelseyhightower/envconfig"
 )
 
 // ServiceConfig contains the configuration of the micro-service
+// Tags are used for the package "envconfig".
 type ServiceConfig struct {
-	DBType        dblayer.DBTYPE `json:"dbtype"`
-	DBConnection  string         `json:"dbconnection"`
-	EndpointAPI   string         `json:"endpointapi"`
-	PasswordMySQL string         `json:"passwordMySQL"`
-	DatabaseName  string         `json:"databaseName"`
+	DBType        dblayer.DBTYPE `envconfig:"DATABASE_TYPE" required:"true"`
+	DBConnection  string         `envconfig:"DATABASE_CONNECTION" required:"true"`
+	EndpointAPI   string         `split_words:"true" required:"true"`
+	PasswordMySQL string         `envconfig:"DATABASE_PASSWORD_MYSQL" required:"true"`
+	DatabaseName  string         `split_words:"true" required:"true"`
 }
 
 // ExtractConfiguration from a given filename
-func ExtractConfiguration(filename string) (ServiceConfig, error) {
-	config := ServiceConfig{
-		DBTypeDefault,
-		DBConnectionDefault,
-		EndpointAPIDefault,
-		PasswordMySQLDefault,
-		DatabaseNameDefault,
-	}
-
-	file, err := os.Open(filename)
-	if err != nil {
-		return config, err
-	}
-	err = json.NewDecoder(file).Decode(&config)
+func ExtractConfiguration() (ServiceConfig, error) {
+	var config ServiceConfig
+	err := envconfig.Process("orgpa", &config)
 	return config, err
 }
