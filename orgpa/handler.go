@@ -60,7 +60,7 @@ func (eh *eventServiceHandler) getNoteByID(w http.ResponseWriter, r *http.Reques
 
 func (eh *eventServiceHandler) addNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
-	note := database.Notes{}
+	note := database.Note{}
 	err := json.NewDecoder(r.Body).Decode(&note)
 	if err != nil {
 		w.WriteHeader(500)
@@ -103,7 +103,7 @@ func (eh *eventServiceHandler) patchNote(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
 	vars := mux.Vars(r)
 	varID, ok := vars["id"]
-	note := database.Notes{}
+	note := database.Note{}
 	err := json.NewDecoder(r.Body).Decode(&note)
 	if !ok || err != nil {
 		w.WriteHeader(400)

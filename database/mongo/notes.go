@@ -9,16 +9,16 @@ import (
 )
 
 // GetAllNotes return all the notes in the NOTES collection.
-func (mgl *MongoDBLayer) GetAllNotes() ([]database.Notes, error) {
+func (mgl *MongoDBLayer) GetAllNotes() ([]database.Note, error) {
 	s := mgl.getFreshSession()
 	defer s.Close()
-	notes := []database.Notes{}
+	notes := []database.Note{}
 	err := s.DB(DB).C(NOTES).Find(nil).All(&notes)
 	return notes, err
 }
 
 // AddNote insert the given note into the database.
-func (mgl *MongoDBLayer) AddNote(note database.Notes) (database.Notes, error) {
+func (mgl *MongoDBLayer) AddNote(note database.Note) (database.Note, error) {
 	s := mgl.getFreshSession()
 	defer s.Close()
 	note.ID, _ = strconv.Atoi(string([]byte(bson.NewObjectId())))
@@ -27,10 +27,10 @@ func (mgl *MongoDBLayer) AddNote(note database.Notes) (database.Notes, error) {
 }
 
 // GetNoteByID will get the given ID and return the corresponding note.
-func (mgl *MongoDBLayer) GetNoteByID(ID []byte) (database.Notes, error) {
+func (mgl *MongoDBLayer) GetNoteByID(ID []byte) (database.Note, error) {
 	s := mgl.getFreshSession()
 	defer s.Close()
-	note := database.Notes{}
+	note := database.Note{}
 	err := s.DB(DB).C(NOTES).FindId(bson.ObjectId(ID)).One(&note)
 	return note, err
 }

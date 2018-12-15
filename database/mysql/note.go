@@ -8,17 +8,17 @@ import (
 // GetAllNotes return all the notes found in the database.
 // If there is any error during the query the function will
 // return an error.
-func (msql *MysqlDBLayer) GetAllNotes() ([]database.Notes, error) {
+func (msql *MysqlDBLayer) GetAllNotes() ([]database.Note, error) {
 	resp, err := msql.session.Query("SELECT * FROM notes ORDER BY created_at DESC")
 	if err != nil {
-		return []database.Notes{}, err
+		return []database.Note{}, err
 	}
 
 	defer resp.Close()
-	allNotes := make([]database.Notes, 0)
+	allNotes := make([]database.Note, 0)
 
 	for resp.Next() {
-		var note database.Notes
+		var note database.Note
 		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit)
 		if err != nil {
 			return allNotes, err
@@ -28,7 +28,7 @@ func (msql *MysqlDBLayer) GetAllNotes() ([]database.Notes, error) {
 	return allNotes, nil
 }
 
-func (msql *MysqlDBLayer) AddNote(note database.Notes) (database.Notes, error) {
+func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
 
 	query, err := msql.session.Prepare("INSERT INTO notes (title,content) VALUES(?,?)")
 	if err != nil {
@@ -38,17 +38,17 @@ func (msql *MysqlDBLayer) AddNote(note database.Notes) (database.Notes, error) {
 
 	result, err := query.Exec(note.Title, note.Content)
 	if err != nil {
-		return database.Notes{}, err
+		return database.Note{}, err
 	}
 	newID, err := result.LastInsertId()
 	if err != nil {
-		return database.Notes{}, err
+		return database.Note{}, err
 	}
 
 	byteID := []byte(strconv.Itoa(int(newID)))
 	newNote, err := msql.GetNoteByID(byteID)
 	if err != nil {
-		return database.Notes{}, err
+		return database.Note{}, err
 	}
 
 	return newNote, nil
@@ -56,14 +56,14 @@ func (msql *MysqlDBLayer) AddNote(note database.Notes) (database.Notes, error) {
 
 // GetNoteByID returns the note corresponding to the given ID.
 // Returns an error if there is any when querying the database.
-func (msql *MysqlDBLayer) GetNoteByID(ID []byte) (database.Notes, error) {
+func (msql *MysqlDBLayer) GetNoteByID(ID []byte) (database.Note, error) {
 	resp, err := msql.session.Query("SELECT * FROM notes WHERE id = ?", string(ID))
 	if err != nil {
-		return database.Notes{}, err
+		return database.Note{}, err
 	}
 
 	defer resp.Close()
-	var note database.Notes
+	var note database.Note
 
 	if resp.Next() {
 		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit)
