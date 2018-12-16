@@ -8,7 +8,7 @@ import (
 
 // GetAllTodos returns all the todo in the todos table.
 func (msql *MysqlDBLayer) GetAllTodos() ([]database.Todo, error) {
-	resp, err := msql.session.Query("SELECT * FROM todos ORDER BY created_at DESC")
+	resp, err := msql.session.Query("SELECT * FROM todos ORDER BY id DESC")
 	if err != nil {
 		return []database.Todo{}, err
 	}
@@ -88,9 +88,9 @@ func (msql *MysqlDBLayer) DeleteTodo(ID int) error {
 
 // PatchTodo will modify the given note in the database.
 // If the note does not exist, it will be created
-func (msql *MysqlDBLayer) PatchTodo(todo database.Todo) (database.Todo, error) {
+func (msql *MysqlDBLayer) PatchTodo(ID int, todo database.Todo) (database.Todo, error) {
 	// Create the todo if it already exists.
-	if msql.todoExist(todo.ID) == false {
+	if msql.todoExist(ID) == false {
 		return msql.AddTodo(todo)
 	}
 
@@ -101,7 +101,7 @@ func (msql *MysqlDBLayer) PatchTodo(todo database.Todo) (database.Todo, error) {
 	}
 	defer query.Close()
 
-	_, err = query.Exec(todo.Title, todo.Content, todo.DueDate, todo.LastEdit, strconv.Itoa(todo.ID))
+	_, err = query.Exec(todo.Title, todo.Content, todo.DueDate, todo.LastEdit, ID)
 	if err != nil {
 		return database.Todo{}, err
 	}

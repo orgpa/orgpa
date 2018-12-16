@@ -15,5 +15,5 @@ type DatabaseHandler interface {
 	AddTodo(todo Todo) (Todo, error)
 	GetTodoByID(ID int) (Todo, error)
 	DeleteTodo(ID int) error
-	PatchTodo(todo Todo) (Todo, error)
+	PatchTodo(ID int, todo Todo) (Todo, error)
 }
