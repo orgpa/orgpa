@@ -1,11 +1,11 @@
 package orgpa
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"orgpa-database-api/database"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -45,7 +45,14 @@ func (eh *eventServiceHandler) getNoteByID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	note, err := eh.dbHandler.GetNoteByID([]byte(varID))
+	ID, err := strconv.Atoi(varID)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
+		return
+	}
+
+	note, err := eh.dbHandler.GetNoteByID(ID)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, `{"error": "Error occured while trying to get the data %s"}`, err)
@@ -90,9 +97,15 @@ func (eh *eventServiceHandler) deleteNote(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err := eh.dbHandler.DeleteNote([]byte(varID))
+	ID, err := strconv.Atoi(varID)
 	if err != nil {
-		fmt.Println("ERROR DELETE => ", err.Error())
+		w.WriteHeader(500)
+		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
+		return
+	}
+
+	err = eh.dbHandler.DeleteNote(ID)
+	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, `{"error": "Error occured while trying to delete the note %s"}`, err)
 		return
@@ -101,9 +114,10 @@ func (eh *eventServiceHandler) deleteNote(w http.ResponseWriter, r *http.Request
 
 func (eh *eventServiceHandler) patchNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
-	vars := mux.Vars(r)
-	varID, ok := vars["id"]
 	note := database.Note{}
+	vars := mux.Vars(r)
+
+	varID, ok := vars["id"]
 	err := json.NewDecoder(r.Body).Decode(&note)
 	if !ok || err != nil {
 		w.WriteHeader(400)
@@ -111,16 +125,17 @@ func (eh *eventServiceHandler) patchNote(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	ID, err := hex.DecodeString(varID)
+	ID, err := strconv.Atoi(varID)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "%s"}`, err)
+		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
 		return
 	}
+
 	err = eh.dbHandler.PatchNote(ID, note.Content)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"error\": \"Error occured while trying to patching the note %s\"}", err)
+		fmt.Fprintf(w, `{"error": "Error occured while trying to patching the note %s"}`, err)
 		return
 	}
 }

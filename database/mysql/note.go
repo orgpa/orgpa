@@ -27,6 +27,7 @@ func (msql *MysqlDBLayer) GetAllNotes() ([]database.Note, error) {
 	return allNotes, nil
 }
 
+// AddNote will insert the given note in the database.
 func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
 	query, err := msql.session.Prepare("INSERT INTO notes (title,content) VALUES(?,?)")
 	if err != nil {
@@ -73,7 +74,7 @@ func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 
 // DeleteNote deletes the given ID into the notes table.
 // Returns an error if any.
-func (msql *MysqlDBLayer) DeleteNote(ID []byte) error {
+func (msql *MysqlDBLayer) DeleteNote(ID int) error {
 	query, err := msql.session.Prepare("DELETE FROM notes WHERE id = ?")
 	if err != nil {
 		return err
@@ -87,6 +88,6 @@ func (msql *MysqlDBLayer) DeleteNote(ID []byte) error {
 	return nil
 }
 
-func (myql *MysqlDBLayer) PatchNote(ID []byte, content string) error {
+func (myql *MysqlDBLayer) PatchNote(ID int, content string) error {
 	return nil
 }

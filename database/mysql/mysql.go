@@ -21,3 +21,8 @@ func NewMysqlLayer(connection, dbPassword, dbName string) (*MysqlDBLayer, error)
 	session, err := sql.Open(dbDriver, dbAdress)
 	return &MysqlDBLayer{session}, err
 }
+
+// CloseConnection with the mysql database.
+func (msql *MysqlDBLayer) CloseConnection() error {
+	return msql.session.Close()
+}
