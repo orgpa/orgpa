@@ -6,6 +6,7 @@ import (
 	"orgpa-database-api/database"
 	"orgpa-database-api/orgpa/message"
 	"strconv"
+	"time"
 )
 
 // GetAllTodos returns all the todo in the todos table.
@@ -19,7 +20,7 @@ func (msql *MysqlDBLayer) GetAllTodos() ([]database.Todo, error) {
 	allTodos := make([]database.Todo, 0)
 	for resp.Next() {
 		var todo database.Todo
-		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit)
+		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit, &todo.CreatedAt)
 		if err != nil {
 			return allTodos, err
 		}
@@ -64,7 +65,7 @@ func (msql *MysqlDBLayer) GetTodoByID(ID int) (database.Todo, error) {
 
 	var todo database.Todo
 	if resp.Next() {
-		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit)
+		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit, &todo.CreatedAt)
 		if err != nil {
 			return todo, err
 		}
@@ -100,10 +101,6 @@ func (msql *MysqlDBLayer) PatchTodo(ID int, todo database.Todo) (database.Todo, 
 		return msql.AddTodo(todo)
 	}
 
-	if todo.ID != ID {
-		todo.ID = ID
-	}
-
 	// Otherwise, update the todo
 	query, err := msql.session.Prepare("UPDATE todos SET title=?, content=?, due_date=?, last_edit=? WHERE id=?")
 	if err != nil {
@@ -111,11 +108,11 @@ func (msql *MysqlDBLayer) PatchTodo(ID int, todo database.Todo) (database.Todo, 
 	}
 	defer query.Close()
 
-	_, err = query.Exec(todo.Title, todo.Content, todo.DueDate, todo.LastEdit, ID)
+	_, err = query.Exec(todo.Title, todo.Content, todo.DueDate, time.Now(), ID)
 	if err != nil {
 		return database.Todo{}, err
 	}
-	return todo, nil
+	return msql.GetTodoByID(ID)
 }
 
 // todoExist check if the given ID is linked to a Todo in the database.

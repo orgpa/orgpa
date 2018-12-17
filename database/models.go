@@ -6,17 +6,19 @@ import (
 
 // Note model
 type Note struct {
-	ID       int        `json:"ID"`
-	Title    string     `json:"Title"`
-	Content  string     `json:"Content"`
-	LastEdit *time.Time `json:"LastEdit"`
+	ID        int        `json:"id"`
+	Title     string     `json:"title"`
+	Content   string     `json:"content"`
+	LastEdit  *time.Time `json:"last_edit"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 // Todo model
 type Todo struct {
-	ID       int        `json:"ID"`
-	Title    string     `json:"Title"`
-	Content  string     `json:"Content"`
-	DueDate  *time.Time `json:"DueDate"`
-	LastEdit *time.Time `json:"LastEdit"`
+	ID        int        `json:"id"`
+	Title     string     `json:"title"`
+	Content   string     `json:"content"`
+	DueDate   *time.Time `json:"due_date"`
+	LastEdit  *time.Time `json:"last_edit"`
+	CreatedAt *time.Time `json:"created_at"`
 }
