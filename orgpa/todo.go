@@ -77,7 +77,7 @@ func (sh *serviceHandler) addTodo(w http.ResponseWriter, r *http.Request) {
 	newTodo, err := sh.dbHandler.AddTodo(todo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
+		fmt.Fprintf(w, `{"%s": false, "error": %s}`, err, message.InternalError.JSON())
 		return
 	}
 

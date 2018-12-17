@@ -59,7 +59,7 @@ func (msql *MysqlDBLayer) AddNote(note database.Note) (database.Note, error) {
 // GetNoteByID returns the note corresponding to the given ID.
 // Returns an error if there is any when querying the database.
 func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
-	resp, err := msql.session.Query("SELECT * FROM notes WHERE id = ?", string(ID))
+	resp, err := msql.session.Query("SELECT * FROM notes WHERE id = ?", strconv.Itoa(ID))
 	if err != nil {
 		return database.Note{}, err
 	}
@@ -79,7 +79,7 @@ func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 // DeleteNote deletes the given ID into the notes table.
 // Returns an error if any.
 func (msql *MysqlDBLayer) DeleteNote(ID int) error {
-	if msql.noteExist(ID) == true {
+	if msql.noteExist(ID) == false {
 		return errors.New(message.NoDataFoundError.Message)
 	}
 
@@ -89,7 +89,7 @@ func (msql *MysqlDBLayer) DeleteNote(ID int) error {
 	}
 
 	defer query.Close()
-	_, err = query.Exec(string(ID))
+	_, err = query.Exec(strconv.Itoa(ID))
 	if err != nil {
 		return err
 	}

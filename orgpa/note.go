@@ -103,7 +103,7 @@ func (sh *serviceHandler) deleteNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = sh.dbHandler.DeleteNote(ID)
-	if err.Error() == message.NoDataFoundError.Message {
+	if err != nil && err.Error() == message.NoDataFoundError.Message {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.NoDataFoundError.JSON())
 		return
@@ -113,7 +113,7 @@ func (sh *serviceHandler) deleteNote(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
-	fmt.Fprintf(w, `{"success": true}`)
+	fmt.Fprint(w, `{"success": true}`)
 }
 
 func (sh *serviceHandler) patchNote(w http.ResponseWriter, r *http.Request) {
