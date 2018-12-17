@@ -1,7 +1,11 @@
 package mysql
 
 import (
+	"database/sql"
+	"errors"
 	"orgpa-database-api/database"
+	"orgpa-database-api/orgpa/message"
+	"strconv"
 )
 
 // GetAllNotes return all the notes found in the database.
@@ -12,8 +16,8 @@ func (msql *MysqlDBLayer) GetAllNotes() ([]database.Note, error) {
 	if err != nil {
 		return []database.Note{}, err
 	}
-
 	defer resp.Close()
+
 	allNotes := make([]database.Note, 0)
 
 	for resp.Next() {
@@ -75,6 +79,10 @@ func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 // DeleteNote deletes the given ID into the notes table.
 // Returns an error if any.
 func (msql *MysqlDBLayer) DeleteNote(ID int) error {
+	if msql.noteExist(ID) == true {
+		return errors.New(message.NoDataFoundError.Message)
+	}
+
 	query, err := msql.session.Prepare("DELETE FROM notes WHERE id = ?")
 	if err != nil {
 		return err
@@ -90,4 +98,13 @@ func (msql *MysqlDBLayer) DeleteNote(ID int) error {
 
 func (myql *MysqlDBLayer) PatchNote(ID int, content string) error {
 	return nil
+}
+
+func (msql *MysqlDBLayer) noteExist(ID int) bool {
+	row := msql.session.QueryRow("SELECT id FROM notes WHERE id=?", strconv.Itoa(ID))
+	err := row.Scan(&ID)
+	if err != nil || err == sql.ErrNoRows {
+		return false
+	}
+	return true
 }

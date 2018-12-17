@@ -111,6 +111,7 @@ func (sh *serviceHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	if err.Error() == message.NoDataFoundError.Message {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.NoDataFoundError.JSON())
+		return
 	}
 	if err != nil {
 		w.WriteHeader(500)
