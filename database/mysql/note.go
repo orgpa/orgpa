@@ -22,7 +22,7 @@ func (msql *MysqlDBLayer) GetAllNotes() ([]database.Note, error) {
 
 	for resp.Next() {
 		var note database.Note
-		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit)
+		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit, &note.CreatedAt)
 		if err != nil {
 			return allNotes, err
 		}
@@ -68,7 +68,7 @@ func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 	var note database.Note
 
 	if resp.Next() {
-		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit)
+		err = resp.Scan(&note.ID, &note.Title, &note.Content, &note.LastEdit, &note.CreatedAt)
 		if err != nil {
 			return note, err
 		}
