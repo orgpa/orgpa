@@ -54,16 +54,15 @@ func (msql *MysqlDBLayer) AddTodo(todo database.Todo) (database.Todo, error) {
 
 // GetTodoByID will return the Todo related to the given ID.
 func (msql *MysqlDBLayer) GetTodoByID(ID int) (database.Todo, error) {
-	resp, err := msql.session.Query("SELECT * FROM todos WHERE id = ?", string(ID))
+	resp, err := msql.session.Query("SELECT * FROM todos WHERE id = ?", strconv.Itoa(ID))
 	if err != nil {
 		return database.Todo{}, err
 	}
-
 	defer resp.Close()
-	var todo database.Todo
 
+	var todo database.Todo
 	if resp.Next() {
-		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.LastEdit)
+		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit)
 		if err != nil {
 			return todo, err
 		}
@@ -79,7 +78,7 @@ func (msql *MysqlDBLayer) DeleteTodo(ID int) error {
 	}
 	defer query.Close()
 
-	_, err = query.Exec(string(ID))
+	_, err = query.Exec(strconv.Itoa(ID))
 	if err != nil {
 		return err
 	}
@@ -92,6 +91,10 @@ func (msql *MysqlDBLayer) PatchTodo(ID int, todo database.Todo) (database.Todo, 
 	// Create the todo if it already exists.
 	if msql.todoExist(ID) == false {
 		return msql.AddTodo(todo)
+	}
+
+	if todo.ID != ID {
+		todo.ID = ID
 	}
 
 	// Otherwise, update the todo

@@ -65,13 +65,15 @@ func (sh *serviceHandler) addTodo(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"error": "Error occured while trying to get the data %s"}`, err)
 		return
 	}
-	todo, err = sh.dbHandler.AddTodo(todo)
+
+	newTodo, err := sh.dbHandler.AddTodo(todo)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, `{"error": "Error occured while trying to insert the data into the database %s"}`, err)
 		return
 	}
-	err = json.NewEncoder(w).Encode(&todo)
+
+	err = json.NewEncoder(w).Encode(&newTodo)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, `{"error": "Error occured while trying encode the note to JSON %s"}`, err)
@@ -101,6 +103,7 @@ func (sh *serviceHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"error": "Error occured while trying to delete the note %s"}`, err)
 		return
 	}
+	fmt.Fprintf(w, `{"success": true}`)
 }
 
 func (sh *serviceHandler) patchTodo(w http.ResponseWriter, r *http.Request) {
@@ -109,10 +112,16 @@ func (sh *serviceHandler) patchTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	varID, ok := vars["id"]
-	err := json.NewDecoder(r.Body).Decode(&todo)
-	if !ok || err != nil {
+	if !ok {
 		w.WriteHeader(400)
 		fmt.Fprint(w, `{"error": "missing information"}`)
+		return
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&todo)
+	if err != nil {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, `{"error": "%s"}`, err)
 		return
 	}
 
@@ -123,10 +132,17 @@ func (sh *serviceHandler) patchTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = sh.dbHandler.PatchTodo(ID, todo)
+	patchedTodo, err := sh.dbHandler.PatchTodo(ID, todo)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, `{"error": "Error occured while trying to patching the note %s"}`, err)
 		return
 	}
+
+	err = json.NewEncoder(w).Encode(&patchedTodo)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, `{"error": "Error occured while trying encode the note to JSON %s"}`, err)
+	}
+
 }
