@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"orgpa-database-api/database"
+	"orgpa-database-api/orgpa/message"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -12,18 +13,22 @@ import (
 
 func (sh *serviceHandler) getAllTodos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=utf8")
+
 	todos, err := sh.dbHandler.GetAllTodos()
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "%s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&todos)
+	jsonTodos, err := json.Marshal(todos)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying encode notes to JSON %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
+		return
 	}
+	fmt.Fprintf(w, `{"success": true, "data": %s, "number_of_record": %d}`, string(jsonTodos), len(todos))
+
 }
 
 func (sh *serviceHandler) getTodoByID(w http.ResponseWriter, r *http.Request) {
@@ -32,28 +37,31 @@ func (sh *serviceHandler) getTodoByID(w http.ResponseWriter, r *http.Request) {
 	varID, ok := vars["id"]
 	if !ok {
 		w.WriteHeader(400)
-		fmt.Fprint(w, `{"error": "No ID found"}`)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MissingInformationError.JSON())
 		return
 	}
 
 	ID, err := strconv.Atoi(varID)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
 
-	note, err := sh.dbHandler.GetNoteByID(ID)
+	todo, err := sh.dbHandler.GetNoteByID(ID)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying to get the data %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
-	err = json.NewEncoder(w).Encode(&note)
+
+	jsonTodo, err := json.Marshal(todo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying encode the note to JSON %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
+		return
 	}
+	fmt.Fprintf(w, `{"success": true, "data": %s}`, string(jsonTodo))
 }
 
 func (sh *serviceHandler) addTodo(w http.ResponseWriter, r *http.Request) {
@@ -61,23 +69,25 @@ func (sh *serviceHandler) addTodo(w http.ResponseWriter, r *http.Request) {
 	todo := database.Todo{}
 	err := json.NewDecoder(r.Body).Decode(&todo)
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying to get the data %s"}`, err)
+		w.WriteHeader(400)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MalformatedDataError.JSON())
 		return
 	}
 
 	newTodo, err := sh.dbHandler.AddTodo(todo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying to insert the data into the database %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&newTodo)
+	jsonNewTodo, err := json.Marshal(newTodo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying encode the note to JSON %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
+		return
 	}
+	fmt.Fprintf(w, `{"success": true, "data": %s}`, string(jsonNewTodo))
 }
 
 func (sh *serviceHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
@@ -86,21 +96,25 @@ func (sh *serviceHandler) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	varID, ok := vars["id"]
 	if !ok {
 		w.WriteHeader(400)
-		fmt.Fprint(w, `{"error": "No ID found"}`)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MissingInformationError.JSON())
 		return
 	}
 
 	ID, err := strconv.Atoi(varID)
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
+		w.WriteHeader(400)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MalformatedDataError.JSON())
 		return
 	}
 
 	err = sh.dbHandler.DeleteTodo(ID)
+	if err.Error() == message.NoDataFoundError.Message {
+		w.WriteHeader(400)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.NoDataFoundError.JSON())
+	}
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying to delete the note %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
 	fmt.Fprintf(w, `{"success": true}`)
@@ -114,35 +128,36 @@ func (sh *serviceHandler) patchTodo(w http.ResponseWriter, r *http.Request) {
 	varID, ok := vars["id"]
 	if !ok {
 		w.WriteHeader(400)
-		fmt.Fprint(w, `{"error": "missing information"}`)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MissingInformationError.JSON())
 		return
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&todo)
 	if err != nil {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, `{"error": "%s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MalformatedDataError.JSON())
 		return
 	}
 
 	ID, err := strconv.Atoi(varID)
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while decoding the ID: %s"}`, err)
+		w.WriteHeader(400)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.MalformatedDataError.JSON())
 		return
 	}
 
 	patchedTodo, err := sh.dbHandler.PatchTodo(ID, todo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying to patching the note %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&patchedTodo)
+	jsonPatchedTodo, err := json.Marshal(patchedTodo)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, `{"error": "Error occured while trying encode the note to JSON %s"}`, err)
+		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
+		return
 	}
-
+	fmt.Fprintf(w, `{"success": true, "data": %s}`, string(jsonPatchedTodo))
 }
