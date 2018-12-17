@@ -11,15 +11,24 @@ import (
 
 // Run run the sover server
 func Run(databaseHandler database.DatabaseHandler, config configuration.ServiceConfig) error {
-	handler := newEventHandler(databaseHandler)
+	handler := newServiceHandler(databaseHandler)
 	r := mux.NewRouter()
-	listSubrouter := r.PathPrefix("/list").Subrouter()
 
-	listSubrouter.Methods("GET").Path("").HandlerFunc(handler.getAllNotes)
-	listSubrouter.Methods("POST").Path("").HandlerFunc(handler.addNote)
-	listSubrouter.Methods("GET").Path("/{id}").HandlerFunc(handler.getNoteByID)
-	listSubrouter.Methods("DELETE").Path("/{id}").HandlerFunc(handler.deleteNote)
-	listSubrouter.Methods("PATCH").Path("/{id}").HandlerFunc(handler.patchNote)
+	// Notes routes
+	noteSubrouter := r.PathPrefix("/notes").Subrouter()
+	noteSubrouter.Methods("GET").Path("").HandlerFunc(handler.getAllNotes)
+	noteSubrouter.Methods("POST").Path("").HandlerFunc(handler.addNote)
+	noteSubrouter.Methods("GET").Path("/{id}").HandlerFunc(handler.getNoteByID)
+	noteSubrouter.Methods("DELETE").Path("/{id}").HandlerFunc(handler.deleteNote)
+	noteSubrouter.Methods("PATCH").Path("/{id}").HandlerFunc(handler.patchNote)
+
+	// Todos routes
+	todoSubrouter := r.PathPrefix("/todos").Subrouter()
+	todoSubrouter.Methods("GET").Path("").HandlerFunc(handler.getAllTodos)
+	todoSubrouter.Methods("POST").Path("").HandlerFunc(handler.addTodo)
+	todoSubrouter.Methods("GET").Path("/{id}").HandlerFunc(handler.getTodoByID)
+	todoSubrouter.Methods("DELETE").Path("/{id}").HandlerFunc(handler.deleteTodo)
+	todoSubrouter.Methods("PATCH").Path("/{id}").HandlerFunc(handler.patchTodo)
 
 	srv := http.Server{
 		Addr:           config.EndpointAPI,
