@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Note model
+// Note represent one row of the "notes" table in the database
 type Note struct {
 	ID        int        `json:"id"`
 	Title     string     `json:"title"`
@@ -13,7 +13,7 @@ type Note struct {
 	CreatedAt *time.Time `json:"created_at"`
 }
 
-// Todo model
+// Todo represent one row of the "todos" table in the database.
 type Todo struct {
 	ID        int        `json:"id"`
 	Title     string     `json:"title"`

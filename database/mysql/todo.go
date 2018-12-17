@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"orgpa-database-api/database"
-	"orgpa-database-api/orgpa/message"
+	"orgpa-database-api/message"
 	"strconv"
 	"time"
 )

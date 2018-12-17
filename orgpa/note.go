@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"orgpa-database-api/database"
-	"orgpa-database-api/orgpa/message"
+	"orgpa-database-api/message"
 	"strconv"
 
 	"github.com/gorilla/mux"

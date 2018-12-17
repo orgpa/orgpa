@@ -7,6 +7,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// MysqlDBLayer is the MySQL database layer.
+// It contains the connection to the database and
+// methodes to close and open it.
 type MysqlDBLayer struct {
 	session *sql.DB
 }

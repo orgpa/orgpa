@@ -16,7 +16,12 @@ type ServiceConfig struct {
 	DatabaseName  string         `split_words:"true" required:"true"`
 }
 
-// ExtractConfiguration from a given filename
+// ExtractConfiguration will extract the configuration from
+// the environement and return a ServiceConfig struct containing
+// the whole service configuration.
+//
+// If an environment variable is missing a non nil error will be
+// returned.
 func ExtractConfiguration() (ServiceConfig, error) {
 	var config ServiceConfig
 	err := envconfig.Process("orgpa", &config)
