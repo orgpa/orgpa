@@ -2,7 +2,9 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
 	"orgpa-database-api/database"
+	"orgpa-database-api/orgpa/message"
 	"strconv"
 )
 
@@ -72,6 +74,11 @@ func (msql *MysqlDBLayer) GetTodoByID(ID int) (database.Todo, error) {
 
 // DeleteTodo will remove the given todo's ID from the todos table.
 func (msql *MysqlDBLayer) DeleteTodo(ID int) error {
+	// Return an error if the row does not exist in the database.
+	if msql.todoExist(ID) == false {
+		return errors.New(message.NoDataFoundError.Message)
+	}
+
 	query, err := msql.session.Prepare("DELETE FROM todos WHERE id = ?")
 	if err != nil {
 		return err
