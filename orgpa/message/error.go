@@ -3,8 +3,8 @@ package message
 import "encoding/json"
 
 type Error struct {
-	Message string
-	Code    int
+	Message string `json:"message"`
+	Code    int    `json:"code"`
 }
 
 var (
