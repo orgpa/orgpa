@@ -9,7 +9,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Run run the sover server
+// Run run the sover server.
+//
+// Takes a database handler / database connection as
+// parameter & the service's configuration.
+// Returns a non nil error if there is any.
 func Run(databaseHandler database.DatabaseHandler, config configuration.ServiceConfig) error {
 	handler := newServiceHandler(databaseHandler)
 	r := mux.NewRouter()

@@ -65,10 +65,14 @@ func (msql *MysqlDBLayer) GetTodoByID(ID int) (database.Todo, error) {
 
 	var todo database.Todo
 	if resp.Next() {
+		// If at least one row is found
 		err = resp.Scan(&todo.ID, &todo.Title, &todo.Content, &todo.DueDate, &todo.LastEdit, &todo.CreatedAt)
 		if err != nil {
 			return todo, err
 		}
+	} else {
+		// If no row is found return a noData error
+		return todo, errors.New(message.NoDataFoundError.Message)
 	}
 	return todo, nil
 }

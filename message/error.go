@@ -15,16 +15,16 @@ type Error struct {
 
 var (
 	// InternalError when the problem comes from inside our server or code
-	InternalError = Error{"service temporary unavaible", 1}
+	InternalError = Error{"service temporary unavaible", 1000}
 
 	// MissingInformationError when an information or parameter is missing
-	MissingInformationError = Error{"invalid parameters", 2}
+	MissingInformationError = Error{"invalid parameters", 2000}
 
 	// MalformatedDataError when the given data is malformated or invalid
-	MalformatedDataError = Error{"data malformated", 3}
+	MalformatedDataError = Error{"data malformated", 2001}
 
 	// NoDataFoundError when 0 row or data have been found
-	NoDataFoundError = Error{"no data found", 4}
+	NoDataFoundError = Error{"no data found", 3000}
 )
 
 // JSON method will return a JSON version of the given Error.
@@ -33,4 +33,14 @@ var (
 func (err Error) JSON() string {
 	json, _ := json.Marshal(err)
 	return string(json)
+}
+
+// IsNoDataErr check if the given error is a NoDataFoundError.
+// If it is a NoDataFoundError "true" value will be returned,
+// otherwise "false" will be returned.
+func IsNoDataErr(errUser error) bool {
+	if NoDataFoundError.Message == errUser.Error() {
+		return true
+	}
+	return false
 }
