@@ -7,7 +7,7 @@ type DatabaseHandler interface {
 	AddNote(note Note) (Note, error)
 	GetNoteByID(ID int) (Note, error)
 	DeleteNote(ID int) error
-	PatchNote(ID int, content string) error
+	PatchNote(ID int, note Note) (Note, error)
 
 	// Todos
 	GetAllTodos() ([]Todo, error)

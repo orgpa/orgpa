@@ -6,6 +6,7 @@ import (
 	"orgpa-database-api/database"
 	"orgpa-database-api/message"
 	"strconv"
+	"time"
 )
 
 // GetAllNotes return all the notes found in the database.
@@ -72,6 +73,8 @@ func (msql *MysqlDBLayer) GetNoteByID(ID int) (database.Note, error) {
 		if err != nil {
 			return note, err
 		}
+	} else {
+		return note, errors.New(message.NoDataFoundError.Message)
 	}
 	return note, nil
 }
@@ -96,10 +99,31 @@ func (msql *MysqlDBLayer) DeleteNote(ID int) error {
 	return nil
 }
 
-func (myql *MysqlDBLayer) PatchNote(ID int, content string) error {
-	return nil
+// PatchNote will modify the note corresponding to the
+// given ID thanks to the given note struct.
+func (msql *MysqlDBLayer) PatchNote(ID int, note database.Note) (database.Note, error) {
+	// Create the todo if it already exists.
+	if msql.noteExist(ID) == false {
+		return msql.AddNote(note)
+	}
+
+	// Otherwise, update the todo
+	query, err := msql.session.Prepare("UPDATE notes SET content=?, last_edit=? WHERE id=?")
+	if err != nil {
+		return database.Note{}, err
+	}
+	defer query.Close()
+
+	// Patch note
+	_, err = query.Exec(note.Content, time.Now(), ID)
+	if err != nil {
+		return database.Note{}, err
+	}
+	// Return the patched note and error
+	return msql.GetNoteByID(ID)
 }
 
+// Check whether or not the not exist in the database.
 func (msql *MysqlDBLayer) noteExist(ID int) bool {
 	row := msql.session.QueryRow("SELECT id FROM notes WHERE id=?", strconv.Itoa(ID))
 	err := row.Scan(&ID)
