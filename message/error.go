@@ -34,3 +34,13 @@ func (err Error) JSON() string {
 	json, _ := json.Marshal(err)
 	return string(json)
 }
+
+// IsNoDataErr check if the given error is a NoDataFoundError.
+// If it is a NoDataFoundError "true" value will be returned,
+// otherwise "false" will be returned.
+func IsNoDataErr(errUser error) bool {
+	if NoDataFoundError.Message == errUser.Error() {
+		return true
+	}
+	return false
+}
