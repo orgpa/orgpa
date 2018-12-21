@@ -80,7 +80,7 @@ func (sh *serviceHandler) getNoteByID(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"success": false, "error": %s}`, message.InternalError.JSON())
 		return
 	}
-	fmt.Fprintf(w, `{"success": true, "data": %s`, jsonNote)
+	fmt.Fprintf(w, `{"success": true, "data": %s}`, jsonNote)
 }
 
 // Add a new note into the database.
